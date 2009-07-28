@@ -11,6 +11,10 @@
 
 #include "libdis.h"
 
+#ifndef RTLD_DEFAULT
+#define RTLD_DEFAULT NULL
+#endif
+
 static void die(char const *format, ...) {
   va_list vl;
   va_start(vl, format);
@@ -24,7 +28,7 @@ static void apply_relocations(char *codevec, int len, pointer relocations) {
   while (is_pair(relocations)) {
     pointer relocation = pair_car(relocations);
     int code_offset = ivalue(pair_cdr(relocation));
-    long target = ivalue(pair_car(pair_cdr(pair_car(relocation))));
+    long target = ivalue(pair_car(relocation));
     uint32_t v = target - (uint32_t) codevec - (code_offset + 4);
 
     relocations = pair_cdr(relocations);
